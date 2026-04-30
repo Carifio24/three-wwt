@@ -1,5 +1,5 @@
 import { Matrix3d, RenderContext, WWTControl } from "@wwtelescope/engine";
-import { ACESFilmicToneMapping, Camera, Matrix4, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import { ACESFilmicToneMapping, Camera, Matrix4, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 
 
 function matchDimensions(source: HTMLCanvasElement, target: HTMLCanvasElement) {
