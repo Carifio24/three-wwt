@@ -9,7 +9,6 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/three": "^0.184.0",
-    "@vitejs/plugin-legacy": "^8.0.1",
     "eslint": "^10.2.1",
     "eslint-plugin-vue": "^10.9.0",
     "globals": "^17.5.0",
@@ -21,10 +20,7 @@
     "vite-plugin-dts": "^5.0.0"
   },
   "scripts": {
-    "build": "run-p type-check 'build-only {@}' --",
-    "build-legacy": "run-p type-check 'build-only-legacy {@}' --",
-    "build-only": "vite build",
-    "build-only-legacy": "LEGACY=true vite build",
+    "build": "tsc",
     "lint": "eslint --no-fix --ignore-pattern .gitignore src"
   }
 }
