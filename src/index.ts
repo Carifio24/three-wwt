@@ -1,5 +1,5 @@
-import { useTHREE } from "./useTHREE";
+import { setupThreeWWT } from "./setupThreeWWT";
 
 export {
-  useTHREE,
+  setupThreeWWT,
 };

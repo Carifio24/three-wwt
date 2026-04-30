@@ -19,7 +19,6 @@ export default typescriptEslint.config(
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: 'module',
-        extraFileExtensions: ['.vue'],
       },
       globals: globals.browser,
     },
@@ -69,7 +68,6 @@ export default typescriptEslint.config(
           "varsIgnorePattern": "^_"
         }
       ],
-      
       
       "@/semi": "error",
     },

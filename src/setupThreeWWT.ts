@@ -1,4 +1,3 @@
-import { ref, watch } from "vue";
 import { WWTControl } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE } from "./utils";
 
@@ -9,7 +8,7 @@ export interface UseTHREEOptions {
 }
 
 
-export function useTHREE(control: WWTControl, options: UseTHREEOptions) {
+export function setupThreeWWT(control: WWTControl, options: UseTHREEOptions) {
   const scene = createTHREEScene();
   const camera = createTHREECamera(control.renderContext, options.far ?? 1);
 
@@ -20,13 +19,20 @@ export function useTHREE(control: WWTControl, options: UseTHREEOptions) {
   const renderer = createTHREERenderer(control, canvas);
   renderer.autoClear = !options.useWWTCanvas;
 
-  const render = ref(options.render ?? true);
+  let render = options.render ?? true;
+
+  function enableRendering(enable: boolean) {
+    render = enable;
+    if (!render) {
+      renderer.clear();
+    }
+  }
 
   const renderOneFrame = WWTControl.singleton.renderOneFrame.bind(WWTControl.singleton);
   WWTControl.singleton.renderOneFrame();
   WWTControl.singleton.renderOneFrame = function () {
     renderOneFrame();
-    if (render.value) {
+    if (render) {
       updateTHREECamera(camera, control.renderContext);
       if (useWWTCanvas) {
         renderer.resetState();
@@ -38,17 +44,11 @@ export function useTHREE(control: WWTControl, options: UseTHREEOptions) {
     }
   }.bind(WWTControl.singleton);
 
-  watch(render, (shouldRender: boolean) => {
-    if (!shouldRender) {
-      renderer.clear();
-    }
-  });
-
   return {
     scene,
     camera,
     canvas,
     renderer,
-    render,
+    enableRendering,
   };
 }
