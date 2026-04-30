@@ -1,7 +1,6 @@
 import { ref, watch } from "vue";
 import { WWTControl } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE } from "./utils";
-import { GLStateSnapshot } from "./glSnapshot";
 
 export interface UseTHREEOptions {
   useWWTCanvas?: boolean;
@@ -20,7 +19,6 @@ export function useTHREE(control: WWTControl, options: UseTHREEOptions) {
   renderer.autoClear = !options.useWWTCanvas;
 
   const render = ref(options.render ?? true);
-  const snapshot = new GLStateSnapshot(canvas.getContext("webgl2")!);
 
   const renderOneFrame = WWTControl.singleton.renderOneFrame.bind(WWTControl.singleton);
   WWTControl.singleton.renderOneFrame();
@@ -29,11 +27,9 @@ export function useTHREE(control: WWTControl, options: UseTHREEOptions) {
     if (render.value) {
       updateTHREECamera(camera, control.renderContext);
       if (useWWTCanvas) {
-        // snapshot.capture();
         renderer.resetState();
         renderTHREE(renderer, scene, camera);
         renderer.resetState();
-        // snapshot.restore();
       } else {
         renderTHREE(renderer, scene, camera);
       }
