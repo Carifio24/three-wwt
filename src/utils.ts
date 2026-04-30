@@ -38,6 +38,8 @@ export function createTHREEScene(): Scene {
 }
 
 export function createTHREERenderer(control: WWTControl, canvas: HTMLCanvasElement): WebGLRenderer {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error `WWTControl` does have a `canvas` member
   const wwtCanvas: HTMLCanvasElement = control.canvas;
   const context = canvas.getContext("webgl2")!;
   const renderer = new WebGLRenderer({

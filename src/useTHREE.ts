@@ -14,6 +14,8 @@ export function useTHREE(control: WWTControl, options: UseTHREEOptions) {
   const camera = createTHREECamera(control.renderContext, options.far ?? 1);
 
   const useWWTCanvas = options.useWWTCanvas ?? false;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error `WWTControl` does have a `canvas` member
   const canvas = useWWTCanvas ? control.canvas : createDummyCanvas(control.canvas);
   const renderer = createTHREERenderer(control, canvas);
   renderer.autoClear = !options.useWWTCanvas;

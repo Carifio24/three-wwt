@@ -1,4 +1,4 @@
-import { useTHREE } from "useTHREE";
+import { useTHREE } from "./useTHREE";
 
 export {
   useTHREE,
