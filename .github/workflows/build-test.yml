@@ -1,0 +1,38 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions: read-all
+  
+concurrency:
+  group: build-and-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        actions: setup/node@v6
+        with:
+          node-version: "22.14.0"
+
+      - name: Set Yarn version
+        run: |
+          corepack enable
+          yarn set version 4.12.0
+
+      - name: Yarn install
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build
+        run: yarn build
