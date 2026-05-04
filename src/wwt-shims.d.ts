@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/**
+ * We don't have control over the method names of the classes that we're
+ * pulling in from WWT
+ */
+
 import "@wwtelescope/engine";
 
 declare module "@wwtelescope/engine" {
