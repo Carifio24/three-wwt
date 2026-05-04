@@ -30,5 +30,5 @@
   "scripts": {
     "build": "tsc && vite build",
     "lint": "eslint --no-fix --ignore-pattern .gitignore src"
-  },
+  }
 }
