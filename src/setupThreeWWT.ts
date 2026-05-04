@@ -1,25 +1,41 @@
 import { WWTControl } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE } from "./utils";
 
+import type { Camera, Scene, WebGLRenderer } from "three";
+
 export interface UseTHREEOptions {
   useWWTCanvas?: boolean;
   render?: boolean;
   far?: number;
 }
 
+export interface ThreeWWTSetup {
+  camera: Camera;
+  renderer: WebGLRenderer;
+  scene: Scene;
+  canvas: HTMLCanvasElement;
+  resizeObserver: ResizeObserver | null;
+  enableRendering: (enable: boolean) => void;
+}
 
-export function setupThreeWWT(control: WWTControl, options: UseTHREEOptions) {
+export function setupThreeWWT(control: WWTControl, options?: UseTHREEOptions): ThreeWWTSetup  {
   const scene = createTHREEScene();
-  const camera = createTHREECamera(control.renderContext, options.far ?? 1);
+  const camera = createTHREECamera(control.renderContext, options?.far ?? 1);
 
-  const useWWTCanvas = options.useWWTCanvas ?? false;
+  const useWWTCanvas = options?.useWWTCanvas ?? false;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error `WWTControl` does have a `canvas` member
-  const canvas = useWWTCanvas ? control.canvas : createDummyCanvas(control.canvas);
-  const renderer = createTHREERenderer(control, canvas);
-  renderer.autoClear = !options.useWWTCanvas;
+  const wwtCanvas: HTMLCanvasElement = control.canvas;
+  let canvas = wwtCanvas;
+  let resizeObserver: ResizeObserver | null = null;
+  if (!useWWTCanvas) {
+    [canvas, resizeObserver] = createDummyCanvas(wwtCanvas);
+  }
 
-  let render = options.render ?? true;
+  const renderer = createTHREERenderer(control, canvas);
+  renderer.autoClear = !options?.useWWTCanvas;
+
+  let render = options?.render ?? true;
 
   function enableRendering(enable: boolean) {
     render = enable;
@@ -50,5 +66,6 @@ export function setupThreeWWT(control: WWTControl, options: UseTHREEOptions) {
     canvas,
     renderer,
     enableRendering,
+    resizeObserver,
   };
 }

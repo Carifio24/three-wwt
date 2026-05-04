@@ -2,6 +2,12 @@ import { Matrix3d, RenderContext, WWTControl } from "@wwtelescope/engine";
 import { ACESFilmicToneMapping, Camera, Matrix4, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 
 
+interface DummyCanvasOptions {
+  opacity?: number;
+  attach?: boolean;
+}
+
+
 function matchDimensions(source: HTMLCanvasElement, target: HTMLCanvasElement) {
   target.style.width = source.style.width;
   target.style.height = source.style.height;
@@ -9,22 +15,32 @@ function matchDimensions(source: HTMLCanvasElement, target: HTMLCanvasElement) {
   target.width = source.width;
 }
 
-export function createDummyCanvas(canvas: HTMLCanvasElement, opacity=0): HTMLCanvasElement {
+export function createDummyCanvas(canvas: HTMLCanvasElement, options?: DummyCanvasOptions): [HTMLCanvasElement, ResizeObserver] {
   const dummy = document.createElement("canvas");
   matchDimensions(canvas, dummy);
+
   dummy.id = "three-js-canvas";
   dummy.style.position = "absolute";
-  dummy.style.left = "0";
-  dummy.style.top = "0";
+  dummy.style.left = canvas.offsetLeft + "px";
+  dummy.style.top = canvas.offsetTop + "px";
+
+  const opacity = options?.opacity ?? 0;
   dummy.style.background = `rgba(0, 0, 0, ${opacity})`;
   dummy.style.pointerEvents = "none";
+
+  const canvasZindex = canvas.style.zIndex;
+  dummy.style.zIndex = canvasZindex ? `${canvasZindex + 10}` : "10";
 
   const observer = new ResizeObserver(_entries => {
     matchDimensions(canvas, dummy);
   });
   observer.observe(canvas);
 
-  return dummy;
+  if (options?.attach ?? true) {
+    canvas.parentNode?.appendChild(dummy);
+  }
+
+  return [dummy, observer];
 }
 
 export function createTHREECamera(renderContext: RenderContext, far=1): PerspectiveCamera {
