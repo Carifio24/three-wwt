@@ -1,6 +1,5 @@
 {
   "name": "three-wwt",
-  "packageManager": "yarn@4.12.0",
   "main": "./dist/my-lib.umd.cjs",
   "module": "./dist/my-lib.js",
   "types": "./dist/index.d.ts",
@@ -31,5 +30,5 @@
   "scripts": {
     "build": "tsc && vite build",
     "lint": "eslint --no-fix --ignore-pattern .gitignore src"
-  }
+  },
 }
