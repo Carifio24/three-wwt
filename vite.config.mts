@@ -17,15 +17,9 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.ts"),
       name: "three-wwt",
       fileName: "three-wwt",
-      formats: ["es", "cjs"],
+      formats: ["es", "cjs", "umd"],
     },
     rollupOptions: {
-      external: ["vue"],
-      output: {
-        globals: {
-          vue: "vue",
-        }
-      }
     }
   },
   plugins: [

@@ -1,6 +1,16 @@
 {
   "name": "three-wwt",
   "packageManager": "yarn@4.12.0",
+  "main": "./dist/my-lib.umd.cjs",
+  "module": "./dist/my-lib.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/my-lib.js",
+      "require": "./dist/my-lib.umd.cjs"
+    }
+  },
   "dependencies": {
     "@wwtelescope/engine": "^7.34.0",
     "three": "^0.184.0"
@@ -8,6 +18,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/three": "^0.184.0",
+    "@vitejs/plugin-legacy": "^8.0.1",
     "eslint": "^10.2.1",
     "globals": "^17.5.0",
     "npm-run-all": "^4.1.5",
@@ -18,7 +29,7 @@
     "vite-plugin-dts": "^5.0.0"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && vite build",
     "lint": "eslint --no-fix --ignore-pattern .gitignore src"
   }
 }
