@@ -3,11 +3,24 @@ import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREES
 
 import type { Camera, Scene, WebGLRenderer } from "three";
 
-export interface UseTHREEOptions {
-  useWWTCanvas?: boolean;
+export type RenderTarget = "wwt" | "custom" | "overlay";
+
+export interface BaseUseThreeOptions {
   render?: boolean;
   far?: number;
 }
+
+interface BasicRenderTargetOptions extends BaseUseThreeOptions {
+  target: "wwt" | "overlay";
+  canvas?: never;
+}
+
+interface CustomRenderTargetOptions extends BaseUseThreeOptions {
+  target: "custom";
+  canvas: HTMLCanvasElement;
+}
+
+export type UseThreeOptions = BasicRenderTargetOptions | CustomRenderTargetOptions;
 
 export interface ThreeWWTSetup {
   camera: Camera;
@@ -18,22 +31,36 @@ export interface ThreeWWTSetup {
   enableRendering: (enable: boolean) => void;
 }
 
-export function setupThreeWWT(control: WWTControl, options?: UseTHREEOptions): ThreeWWTSetup  {
+export function setupThreeWWT(control: WWTControl, options?: UseThreeOptions): ThreeWWTSetup  {
+  const opts: UseThreeOptions = options ?? { target: "wwt" };
   const scene = createTHREEScene();
-  const camera = createTHREECamera(control.renderContext, options?.far ?? 1);
+  const camera = createTHREECamera(control.renderContext, opts.far ?? 1);
 
-  const useWWTCanvas = options?.useWWTCanvas ?? false;
+  const renderTarget = opts.target ?? "wwt";
+
+  if (renderTarget === "custom" && opts.canvas == undefined) {
+    throw new Error("You must provide a canvas element when using a custom render target");
+  }
+  //
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error `WWTControl` does have a `canvas` member
   const wwtCanvas: HTMLCanvasElement = control.canvas;
+
   let canvas = wwtCanvas;
   let resizeObserver: ResizeObserver | null = null;
-  if (!useWWTCanvas) {
-    [canvas, resizeObserver] = createDummyCanvas(wwtCanvas);
+  if (opts) {
+    switch (opts.target) {
+      case "custom":
+        canvas = opts.canvas;
+        break;
+      case "overlay":
+        [canvas, resizeObserver] = createDummyCanvas(canvas);
+        break;
+    }
   }
 
   const renderer = createTHREERenderer(control, canvas);
-  renderer.autoClear = !options?.useWWTCanvas;
+  renderer.autoClear = renderTarget !== "wwt";
 
   let render = options?.render ?? true;
 
@@ -44,19 +71,25 @@ export function setupThreeWWT(control: WWTControl, options?: UseTHREEOptions): T
     }
   }
 
+  let renderTHREEBlock: CallableFunction;
+  if (renderTarget == "wwt") {
+    renderTHREEBlock = function() {
+      renderer.resetState();
+      renderTHREE(renderer, scene, camera);
+      renderer.resetState();
+    }
+  } else {
+    renderTHREEBlock = renderTHREE;
+  }
+
+
   const renderOneFrame = WWTControl.singleton.renderOneFrame.bind(WWTControl.singleton);
   WWTControl.singleton.renderOneFrame();
   WWTControl.singleton.renderOneFrame = function () {
     renderOneFrame();
     if (render) {
       updateTHREECamera(camera, control.renderContext);
-      if (useWWTCanvas) {
-        renderer.resetState();
-        renderTHREE(renderer, scene, camera);
-        renderer.resetState();
-      } else {
-        renderTHREE(renderer, scene, camera);
-      }
+      renderTHREEBlock(); 
     }
   }.bind(WWTControl.singleton);
 
