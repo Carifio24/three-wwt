@@ -3,9 +3,7 @@ import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREES
 
 import type { Camera, Scene, WebGLRenderer } from "three";
 
-export type RenderTarget = "wwt" | "custom" | "overlay";
-
-export interface BaseUseThreeOptions {
+interface BaseUseThreeOptions {
   render?: boolean;
   far?: number;
 }
