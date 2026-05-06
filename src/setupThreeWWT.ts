@@ -48,12 +48,12 @@ export function setupThreeWWT(control: WWTControl, options?: UseThreeOptions): T
   let resizeObserver: ResizeObserver | null = null;
   if (opts) {
     switch (opts.target) {
-      case "custom":
-        canvas = opts.canvas;
-        break;
-      case "overlay":
-        [canvas, resizeObserver] = createDummyCanvas(canvas);
-        break;
+    case "custom":
+      canvas = opts.canvas;
+      break;
+    case "overlay":
+      [canvas, resizeObserver] = createDummyCanvas(canvas);
+      break;
     }
   }
 
@@ -75,7 +75,7 @@ export function setupThreeWWT(control: WWTControl, options?: UseThreeOptions): T
       renderer.resetState();
       renderTHREE(renderer, scene, camera);
       renderer.resetState();
-    }
+    };
   } else {
     renderTHREEBlock = renderTHREE;
   }
