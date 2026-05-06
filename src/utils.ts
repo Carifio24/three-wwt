@@ -15,6 +15,14 @@ function matchDimensions(source: HTMLCanvasElement, target: HTMLCanvasElement) {
   target.width = source.width;
 }
 
+function setupResizeObserver(source: HTMLCanvasElement, target: HTMLCanvasElement): ResizeObserver {
+  const observer = new ResizeObserver(_entries => {
+    matchDimensions(source, target);
+  });
+  observer.observe(source);
+  return observer;
+}
+
 export function createDummyCanvas(canvas: HTMLCanvasElement, options?: DummyCanvasOptions): [HTMLCanvasElement, ResizeObserver] {
   const dummy = document.createElement("canvas");
   matchDimensions(canvas, dummy);
@@ -31,10 +39,7 @@ export function createDummyCanvas(canvas: HTMLCanvasElement, options?: DummyCanv
   const canvasZindex = canvas.style.zIndex;
   dummy.style.zIndex = canvasZindex ? `${canvasZindex + 10}` : "10";
 
-  const observer = new ResizeObserver(_entries => {
-    matchDimensions(canvas, dummy);
-  });
-  observer.observe(canvas);
+  const observer = setupResizeObserver(canvas, dummy);
 
   if (options?.attach ?? true) {
     canvas.parentNode?.appendChild(dummy);
