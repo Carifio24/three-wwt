@@ -15,7 +15,7 @@ export default defineConfig({
     outDir: "dist",
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "three-wwt",
+      name: "ThreeWWT",
       fileName: "three-wwt",
       formats: ["es", "cjs", "umd"],
     },
