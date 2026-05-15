@@ -81,15 +81,15 @@ export function setupThreeWWT(control: WWTControl, options?: UseThreeOptions): T
   }
 
 
-  const renderOneFrame = WWTControl.singleton.renderOneFrame.bind(WWTControl.singleton);
-  WWTControl.singleton.renderOneFrame();
-  WWTControl.singleton.renderOneFrame = function () {
+  const renderOneFrame = control.renderOneFrame.bind(control);
+  control.renderOneFrame();
+  control.renderOneFrame = function () {
     renderOneFrame();
     if (render) {
       updateTHREECamera(camera, control.renderContext);
       renderTHREEBlock(); 
     }
-  }.bind(WWTControl.singleton);
+  }.bind(control);
 
   return {
     scene,
