@@ -1,7 +1,7 @@
 import { WWTControl } from "@wwtelescope/engine";
-import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE } from "./utils";
+import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE, setThree } from "./utils";
 
-import type { Camera, Scene, WebGLRenderer } from "three";
+import * as THREE from "three";
 
 interface BaseUseThreeOptions {
   render?: boolean;
@@ -21,15 +21,17 @@ interface CustomRenderTargetOptions extends BaseUseThreeOptions {
 export type UseThreeOptions = BasicRenderTargetOptions | CustomRenderTargetOptions;
 
 export interface ThreeWWTSetup {
-  camera: Camera;
-  renderer: WebGLRenderer;
-  scene: Scene;
+  camera: THREE.Camera;
+  renderer: THREE.WebGLRenderer;
+  scene: THREE.Scene;
   canvas: HTMLCanvasElement;
   resizeObserver: ResizeObserver | null;
   enableRendering: (enable: boolean) => void;
 }
 
-export function setupThreeWWT(control: WWTControl, options?: UseThreeOptions): ThreeWWTSetup  {
+export function setupThreeWWT(three: typeof THREE, control: WWTControl, options?: UseThreeOptions): ThreeWWTSetup  {
+  setThree(three);
+
   const opts: UseThreeOptions = options ?? { target: "wwt" };
   const scene = createTHREEScene();
   const camera = createTHREECamera(control.renderContext, opts.far ?? 1);
