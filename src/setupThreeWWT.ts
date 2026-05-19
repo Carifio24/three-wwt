@@ -6,6 +6,7 @@ import * as THREE from "three";
 interface BaseUseThreeOptions {
   render?: boolean;
   far?: number;
+  ambientLight?: boolean;
 }
 
 interface BasicRenderTargetOptions extends BaseUseThreeOptions {
@@ -33,7 +34,7 @@ export function setupThreeWWT(three: typeof THREE, control: WWTControl, options?
   setThree(three);
 
   const opts: UseThreeOptions = options ?? { target: "wwt" };
-  const scene = createTHREEScene();
+  const scene = createTHREEScene(options?.ambientLight ?? true);
   const camera = createTHREECamera(control.renderContext, opts.far ?? 1);
 
   const renderTarget = opts.target ?? "wwt";

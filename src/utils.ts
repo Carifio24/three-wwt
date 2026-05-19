@@ -60,10 +60,12 @@ export function createTHREECamera(renderContext: RenderContext, far=1) {
   return camera;
 }
 
-export function createTHREEScene() {
+export function createTHREEScene(ambientLight=true) {
   const scene = new threeJS.Scene();
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-  scene.add(ambientLight);
+  if (ambientLight) {
+    const light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(light);
+  }
   return scene;
 }
 
