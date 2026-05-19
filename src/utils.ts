@@ -60,8 +60,13 @@ export function createTHREECamera(renderContext: RenderContext, far=1) {
   return camera;
 }
 
-export function createTHREEScene() {
-  return new threeJS.Scene();
+export function createTHREEScene(ambientLight=true) {
+  const scene = new threeJS.Scene();
+  if (ambientLight) {
+    const light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(light);
+  }
+  return scene;
 }
 
 export function createTHREERenderer(control: WWTControl, canvas: HTMLCanvasElement) {
