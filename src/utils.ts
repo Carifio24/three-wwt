@@ -1,6 +1,12 @@
 import { Matrix3d, RenderContext, WWTControl } from "@wwtelescope/engine";
-import { ACESFilmicToneMapping, Camera, Matrix4, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import * as THREE from "three";
 
+type ThreeJS = typeof THREE;
+
+let threeJS: ThreeJS;
+export function setThree(three: ThreeJS) {
+  threeJS = three;
+}
 
 interface DummyCanvasOptions {
   opacity?: number;
@@ -48,22 +54,22 @@ export function createDummyCanvas(canvas: HTMLCanvasElement, options?: DummyCanv
   return [dummy, observer];
 }
 
-export function createTHREECamera(renderContext: RenderContext, far=1): PerspectiveCamera {
-  const camera = new PerspectiveCamera(75, renderContext.width / renderContext.height, renderContext.nearPlane, far);
+export function createTHREECamera(renderContext: RenderContext, far=1) {
+  const camera = new threeJS.PerspectiveCamera(75, renderContext.width / renderContext.height, renderContext.nearPlane, far);
   camera.matrixAutoUpdate = false;
   return camera;
 }
 
-export function createTHREEScene(): Scene {
-  return new Scene();
+export function createTHREEScene() {
+  return new threeJS.Scene();
 }
 
-export function createTHREERenderer(control: WWTControl, canvas: HTMLCanvasElement): WebGLRenderer {
+export function createTHREERenderer(control: WWTControl, canvas: HTMLCanvasElement) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error `WWTControl` does have a `canvas` member
   const wwtCanvas: HTMLCanvasElement = control.canvas;
   const context = canvas.getContext("webgl2")!;
-  const renderer = new WebGLRenderer({
+  const renderer = new threeJS.WebGLRenderer({
     canvas,
     context,
     antialias: true,
@@ -73,15 +79,15 @@ export function createTHREERenderer(control: WWTControl, canvas: HTMLCanvasEleme
   renderer.setPixelRatio(wwtCanvas.width / wwtCanvas.clientWidth);
   renderer.setClearColor(0x000000, 0);
 
-  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.toneMapping = threeJS.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1;
   renderer.shadowMap.enabled = true;
 
   return renderer;
 }
 
-export function wwtMatrixToTHREE(mat: Matrix3d): Matrix4 {
-  const matrix = new Matrix4();
+export function wwtMatrixToTHREE(mat: Matrix3d) {
+  const matrix = new threeJS.Matrix4();
   matrix.set(
     mat.get_m11(), mat.get_m21(), mat.get_m31(), mat.get_m41(),
     mat.get_m12(), mat.get_m22(), mat.get_m32(), mat.get_m42(),
@@ -91,7 +97,7 @@ export function wwtMatrixToTHREE(mat: Matrix3d): Matrix4 {
   return matrix;
 }
 
-export function updateTHREECamera(camera: PerspectiveCamera, renderContext: RenderContext) {
+export function updateTHREECamera(camera: THREE.PerspectiveCamera, renderContext: RenderContext) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error `get_projection` exists
   camera.projectionMatrix.copy(wwtMatrixToTHREE(renderContext.get_projection()));
@@ -104,6 +110,6 @@ export function updateTHREECamera(camera: PerspectiveCamera, renderContext: Rend
   camera.matrixWorldNeedsUpdate = false;
 }
 
-export function renderTHREE(renderer: WebGLRenderer, scene: Scene, camera: Camera) {
+export function renderTHREE(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera) {
   renderer.render(scene, camera);
 }

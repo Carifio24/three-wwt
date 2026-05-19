@@ -20,6 +20,7 @@ export default defineConfig({
       formats: ["es", "cjs", "umd"],
     },
     rollupOptions: {
+      external: ["three"],
     }
   },
   plugins: [
