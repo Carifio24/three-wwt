@@ -1,0 +1,54 @@
+name: Publish Package to npm
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get package version from release tag
+        uses: sergeysova/jq-action@v2
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+        with:
+          cmd: cat package.json | jq ".version = \"$VERSION\"" > updated.json; mv updated.json package.json
+
+      - name: Enable corepack
+        run: corepack enable
+
+      # This should match the version set in package.json
+      - name: Set yarn version
+        run: yarn set version 4.12.0
+
+      - name: yarn install
+        run: yarn
+
+      - name: Lint package
+        run: yarn lint
+
+      - name: Build package
+        run: yarn build
+
+      - name: Publish package
+        run: yarn npm publish
+
+          # - name: Deploy to GitHub Pages
+          #   uses: JamesIves/github-pages-deploy-action@v4
+          #   with:
+          #     branch: gh-pages
+          #     folder: docs
+          #     ssh-key: ${{ secrets.DEPLOY_KEY }}
