@@ -35,5 +35,10 @@
     "build": "tsc && vite build",
     "lint": "eslint --no-fix --ignore-pattern .gitignore src"
   },
+  "publicConfig": {
+    "access": "public"
+  },
+  "types": "./dist/src/index.d.ts",
+  "version": "0.0.0-dev0",
   "packageManager": "yarn@4.12.0"
 }
