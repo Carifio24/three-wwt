@@ -1,14 +1,14 @@
 {
-  "name": "three-wwt",
+  "name": "@cosmicds/three-wwt",
   "license": "MIT",
-  "main": "./dist/my-lib.umd.cjs",
-  "module": "./dist/my-lib.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/three-wwt.umd.cjs",
+  "module": "./dist/three-wwt.js",
+  "types": "./dist/three-wwt.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/my-lib.js",
-      "require": "./dist/my-lib.umd.cjs"
+      "types": "./dist/three-wwt.d.ts",
+      "import": "./dist/three-wwt.js",
+      "require": "./dist/three-wwt.umd.cjs"
     }
   },
   "dependencies": {
