@@ -1,4 +1,4 @@
-import { ScriptInterface, WWTControl, globalScriptInterface } from "@wwtelescope/engine";
+import { ScriptInterface, WWTControl } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE, setThree } from "./utils";
 
 import * as THREE from "three";
@@ -39,7 +39,9 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
   setThree(options.three);
 
   const control = options.control ?? WWTControl.singleton;
-  const scriptInterface = options.scriptInterface ?? globalScriptInterface;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error `WWTControl` does have a `scriptInterface` member
+  const scriptInterface = options.scriptInterface ?? WWTControl.scriptInterface as ScriptInterface;
 
   const scene = createTHREEScene(options?.ambientLight ?? true);
   const camera = createTHREECamera(control.renderContext, options.far ?? 1);
@@ -49,7 +51,7 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
   if (renderTarget === "custom" && options.canvas == undefined) {
     throw new Error("You must provide a canvas element when using a custom render target");
   }
-  //
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error `WWTControl` does have a `canvas` member
   const wwtCanvas: HTMLCanvasElement = control.canvas;
