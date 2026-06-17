@@ -1,5 +1,4 @@
-
-import { FrameCallback, ScriptInterface, WWTControl, globalScriptInterface } from "@wwtelescope/engine";
+import { ScriptInterface, WWTControl, globalScriptInterface } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE, setThree } from "./utils";
 
 import * as THREE from "three";
@@ -33,7 +32,7 @@ export interface ThreeWWTSetup {
   canvas: HTMLCanvasElement;
   resizeObserver: ResizeObserver | null;
   enableRendering: (enable: boolean) => void;
-  frameCallback: FrameCallback;
+  disconnect: () => void;
 }
 
 export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
@@ -98,6 +97,10 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
 
   scriptInterface.add_on_frame(frameCallback);
 
+  function disconnect() {
+    scriptInterface.remove_on_frame(frameCallback);
+  }
+
   return {
     scene,
     camera,
@@ -105,6 +108,6 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
     renderer,
     enableRendering,
     resizeObserver,
-    frameCallback,
+    disconnect,
   };
 }
