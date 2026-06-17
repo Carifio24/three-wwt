@@ -1134,6 +1134,7 @@ __metadata:
     vite: "npm:^8.0.10"
     vite-plugin-dts: "npm:^5.0.0"
   peerDependencies:
+    "@wwtelescope/engine-pinia": "*"
     three: ^0.182.0
   languageName: unknown
   linkType: soft

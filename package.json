@@ -15,7 +15,13 @@
     "@wwtelescope/engine": "^7.36.0"
   },
   "peerDependencies": {
+    "@wwtelescope/engine-pinia": "^0.15.0",
     "three": "^0.182.0"
+  },
+  "peerDependenciesMeta": {
+    "@wwtelescope/engine-pinia": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
