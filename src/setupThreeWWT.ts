@@ -50,9 +50,7 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
   const scene = createTHREEScene(options?.ambientLight ?? true);
   const camera = createTHREECamera(control.renderContext, options.far ?? 1);
 
-  const renderTarget = options.target ?? "wwt";
-
-  if (renderTarget === "custom" && options.canvas == undefined) {
+  if (options.target === "custom" && options.canvas == undefined) {
     throw new Error("You must provide a canvas element when using a custom render target");
   }
 
@@ -62,15 +60,16 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
 
   let canvas = wwtCanvas;
   let resizeObserver: ResizeObserver | null = null;
-  switch (renderTarget) {
+  switch (options.target) {
   case "custom":
-    canvas = (options as CustomRenderTargetOptions).canvas;
+    canvas = options.canvas;
     break;
   case "overlay":
     [canvas, resizeObserver] = createDummyCanvas(canvas);
     break;
   }
 
+  const renderTarget = options.target ?? "wwt";
   const renderer = createTHREERenderer(control, canvas);
   renderer.autoClear = renderTarget !== "wwt";
 
