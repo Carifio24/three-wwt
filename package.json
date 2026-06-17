@@ -3,7 +3,7 @@
   "license": "MIT",
   "main": "./dist/three-wwt.umd.cjs",
   "module": "./dist/three-wwt.js",
-  "types": "./dist/src/index.d.ts",
+  "types": "./dist/src/three-wwt.d.ts",
   "exports": {
     ".": {
       "types": "./dist/three-wwt.d.ts",
