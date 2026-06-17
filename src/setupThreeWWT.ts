@@ -1,16 +1,21 @@
-import { WWTControl } from "@wwtelescope/engine";
+
+import { FrameCallback, ScriptInterface, WWTControl, globalScriptInterface } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE, setThree } from "./utils";
 
 import * as THREE from "three";
 
+
 interface BaseUseThreeOptions {
+  three: typeof THREE;
+  control?: WWTControl;
+  scriptInterface?: ScriptInterface;
   render?: boolean;
   far?: number;
   ambientLight?: boolean;
 }
 
 interface BasicRenderTargetOptions extends BaseUseThreeOptions {
-  target: "wwt" | "overlay";
+  target?: "wwt" | "overlay";
   canvas?: never;
 }
 
@@ -28,18 +33,21 @@ export interface ThreeWWTSetup {
   canvas: HTMLCanvasElement;
   resizeObserver: ResizeObserver | null;
   enableRendering: (enable: boolean) => void;
+  frameCallback: FrameCallback;
 }
 
-export function setupThreeWWT(three: typeof THREE, control: WWTControl, options?: UseThreeOptions): ThreeWWTSetup  {
-  setThree(three);
+export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
+  setThree(options.three);
 
-  const opts: UseThreeOptions = options ?? { target: "wwt" };
+  const control = options.control ?? WWTControl.singleton;
+  const scriptInterface = options.scriptInterface ?? globalScriptInterface;
+
   const scene = createTHREEScene(options?.ambientLight ?? true);
-  const camera = createTHREECamera(control.renderContext, opts.far ?? 1);
+  const camera = createTHREECamera(control.renderContext, options.far ?? 1);
 
-  const renderTarget = opts.target ?? "wwt";
+  const renderTarget = options.target ?? "wwt";
 
-  if (renderTarget === "custom" && opts.canvas == undefined) {
+  if (renderTarget === "custom" && options.canvas == undefined) {
     throw new Error("You must provide a canvas element when using a custom render target");
   }
   //
@@ -49,15 +57,13 @@ export function setupThreeWWT(three: typeof THREE, control: WWTControl, options?
 
   let canvas = wwtCanvas;
   let resizeObserver: ResizeObserver | null = null;
-  if (opts) {
-    switch (opts.target) {
-    case "custom":
-      canvas = opts.canvas;
-      break;
-    case "overlay":
-      [canvas, resizeObserver] = createDummyCanvas(canvas);
-      break;
-    }
+  switch (renderTarget) {
+  case "custom":
+    canvas = (options as CustomRenderTargetOptions).canvas;
+    break;
+  case "overlay":
+    [canvas, resizeObserver] = createDummyCanvas(canvas);
+    break;
   }
 
   const renderer = createTHREERenderer(control, canvas);
@@ -83,16 +89,14 @@ export function setupThreeWWT(three: typeof THREE, control: WWTControl, options?
     renderTHREEBlock = renderTHREE;
   }
 
-
-  const renderOneFrame = control.renderOneFrame.bind(control);
-  control.renderOneFrame();
-  control.renderOneFrame = function () {
-    renderOneFrame();
+  function frameCallback(_si: ScriptInterface) {
     if (render) {
       updateTHREECamera(camera, control.renderContext);
       renderTHREEBlock(); 
     }
-  }.bind(control);
+  }
+
+  scriptInterface.add_on_frame(frameCallback);
 
   return {
     scene,
@@ -101,5 +105,6 @@ export function setupThreeWWT(three: typeof THREE, control: WWTControl, options?
     renderer,
     enableRendering,
     resizeObserver,
+    frameCallback,
   };
 }
