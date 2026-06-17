@@ -4,26 +4,30 @@ import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREES
 import * as THREE from "three";
 
 
-interface BaseUseThreeOptions {
+export interface BaseUseThreeOptions {
   three: typeof THREE;
-  control?: WWTControl;
-  scriptInterface?: ScriptInterface;
   render?: boolean;
   far?: number;
   ambientLight?: boolean;
 }
 
-interface BasicRenderTargetOptions extends BaseUseThreeOptions {
+export interface WWTConnectionOptions {
+  control?: WWTControl;
+  scriptInterface?: ScriptInterface;
+}
+
+interface BasicRenderTargetOptions {
   target?: "wwt" | "overlay";
   canvas?: never;
 }
 
-interface CustomRenderTargetOptions extends BaseUseThreeOptions {
+interface CustomRenderTargetOptions {
   target: "custom";
   canvas: HTMLCanvasElement;
 }
 
-export type UseThreeOptions = BasicRenderTargetOptions | CustomRenderTargetOptions;
+export type RenderTargetOptions = BasicRenderTargetOptions | CustomRenderTargetOptions;
+export type UseThreeOptions = BaseUseThreeOptions & RenderTargetOptions & WWTConnectionOptions;
 
 export interface ThreeWWTSetup {
   camera: THREE.Camera;
