@@ -35,7 +35,15 @@ export default defineConfig({
       additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
       renderModernChunks: false,
     })] : []),
-    dts({ rollupTypes: true }),
+    dts({
+      rollupTypes: true,
+      beforeWriteFile: (filePath, content) => {
+        return {
+          filePath: filePath.replace("index.d.ts", "three-wwt.d.ts"),
+          content,
+        };
+      },
+    }),
   ],
   define: { 'process.env': {} },
   resolve: {
