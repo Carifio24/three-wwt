@@ -15,12 +15,19 @@
     "@wwtelescope/engine": "^7.36.0"
   },
   "peerDependencies": {
+    "@wwtelescope/engine-pinia": "^0.15.0",
     "three": "^0.182.0"
+  },
+  "peerDependenciesMeta": {
+    "@wwtelescope/engine-pinia": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/three": "^0.184.1",
     "@vitejs/plugin-legacy": "^8.0.1",
+    "@wwtelescope/engine-pinia": "^0.15.0",
     "eslint": "^10.2.1",
     "globals": "^17.5.0",
     "npm-run-all": "^4.1.5",

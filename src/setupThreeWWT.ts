@@ -1,29 +1,33 @@
-import { ScriptInterface, WWTControl, globalScriptInterface } from "@wwtelescope/engine";
+import { ScriptInterface, WWTControl } from "@wwtelescope/engine";
 import { createDummyCanvas, createTHREECamera, createTHREERenderer, createTHREEScene, updateTHREECamera, renderTHREE, setThree } from "./utils";
 
 import * as THREE from "three";
 
 
-interface BaseUseThreeOptions {
+export interface BaseUseThreeOptions {
   three: typeof THREE;
-  control?: WWTControl;
-  scriptInterface?: ScriptInterface;
   render?: boolean;
   far?: number;
   ambientLight?: boolean;
 }
 
-interface BasicRenderTargetOptions extends BaseUseThreeOptions {
+export interface WWTConnectionOptions {
+  control?: WWTControl;
+  scriptInterface?: ScriptInterface;
+}
+
+interface BasicRenderTargetOptions {
   target?: "wwt" | "overlay";
   canvas?: never;
 }
 
-interface CustomRenderTargetOptions extends BaseUseThreeOptions {
+interface CustomRenderTargetOptions {
   target: "custom";
   canvas: HTMLCanvasElement;
 }
 
-export type UseThreeOptions = BasicRenderTargetOptions | CustomRenderTargetOptions;
+export type RenderTargetOptions = BasicRenderTargetOptions | CustomRenderTargetOptions;
+export type UseThreeOptions = BaseUseThreeOptions & RenderTargetOptions & WWTConnectionOptions;
 
 export interface ThreeWWTSetup {
   camera: THREE.Camera;
@@ -39,32 +43,33 @@ export function setupThreeWWT(options: UseThreeOptions): ThreeWWTSetup  {
   setThree(options.three);
 
   const control = options.control ?? WWTControl.singleton;
-  const scriptInterface = options.scriptInterface ?? globalScriptInterface;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error `WWTControl` does have a `scriptInterface` member
+  const scriptInterface = options.scriptInterface ?? WWTControl.scriptInterface as ScriptInterface;
 
   const scene = createTHREEScene(options?.ambientLight ?? true);
   const camera = createTHREECamera(control.renderContext, options.far ?? 1);
 
-  const renderTarget = options.target ?? "wwt";
-
-  if (renderTarget === "custom" && options.canvas == undefined) {
+  if (options.target === "custom" && options.canvas == undefined) {
     throw new Error("You must provide a canvas element when using a custom render target");
   }
-  //
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error `WWTControl` does have a `canvas` member
   const wwtCanvas: HTMLCanvasElement = control.canvas;
 
   let canvas = wwtCanvas;
   let resizeObserver: ResizeObserver | null = null;
-  switch (renderTarget) {
+  switch (options.target) {
   case "custom":
-    canvas = (options as CustomRenderTargetOptions).canvas;
+    canvas = options.canvas;
     break;
   case "overlay":
     [canvas, resizeObserver] = createDummyCanvas(canvas);
     break;
   }
 
+  const renderTarget = options.target ?? "wwt";
   const renderer = createTHREERenderer(control, canvas);
   renderer.autoClear = renderTarget !== "wwt";
 

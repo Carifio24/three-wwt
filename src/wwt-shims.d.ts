@@ -8,8 +8,6 @@ import "@wwtelescope/engine";
 
 declare module "@wwtelescope/engine" {
 
-  export const globalScriptInterface: ScriptInterface;
-    
   export class Matrix3d {
     multiplyMatrix(a: Matrix3d, b: Matrix3d): Matrix3d;
     invertMatrix(m: Matrix3d): Matrix3d;
