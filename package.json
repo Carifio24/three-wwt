@@ -11,6 +11,10 @@
       "require": "./dist/three-wwt.umd.cjs"
     }
   },
+  "files": [
+    "dist/*",
+    "src/*"
+  ],
   "dependencies": {
     "@wwtelescope/engine": "^7.36.0"
   },
