@@ -4,14 +4,14 @@ import * as THREE from "three";
 type ThreeJS = typeof THREE;
 
 let threeJS: ThreeJS;
-let ECLIPTIC_TO_WWT: THREE.Matrix4;
+let eclipticToWWT: THREE.Matrix4;
 export function setThree(three: ThreeJS) {
   threeJS = three;
   updateWorldTransformMatrix(threeJS);
 }
 
 function updateWorldTransformMatrix(three: ThreeJS) {
-  ECLIPTIC_TO_WWT = new three.Matrix4().set(
+  eclipticToWWT = new three.Matrix4().set(
     1, 0, 0, 0,
     0, 0, 1, 0,
     0, 1, 0, 0,
@@ -123,8 +123,8 @@ export function updateTHREECamera(camera: THREE.PerspectiveCamera, renderContext
   // @ts-expect-error `get_view` exists
   camera.matrixWorldInverse.copy(wwtMatrixToTHREE(renderContext.get_view()));
   camera.matrixWorld.copy(camera.matrixWorldInverse).invert();
-  camera.matrixWorldInverse.multiply(ECLIPTIC_TO_WWT);
-  camera.matrixWorld.premultiply(ECLIPTIC_TO_WWT);
+  camera.matrixWorldInverse.multiply(eclipticToWWT);
+  camera.matrixWorld.premultiply(eclipticToWWT);
   camera.matrixWorldNeedsUpdate = false;
 }
 
